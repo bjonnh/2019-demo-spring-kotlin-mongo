@@ -17,12 +17,14 @@ OS vendor or the [Official Docker website](https://www.docker.io).
 
 Technically, you only need the file stack.yml if you don't want to work on the code itself or rebuild it.
 
-If you need, the stack expose a mongo-express instance on <http://localhost:8081>
-
-and run:
+Run
 ```shell
 $ docker-compose -f stack.yml .
 ```
+
+
+If you need, the stack expose a mongo-express instance on <http://localhost:8081>
+
 
 ## Testing the stack
 You can then access the API:
