@@ -1,6 +1,7 @@
 package net.nprod.demo.controller
 
 
+import net.nprod.demo.component.SecUserDetailsService
 import net.nprod.demo.model.Spectrum
 import net.nprod.demo.repository.SpectrumRepository
 import net.nprod.demo.repository.UserRepository
@@ -11,14 +12,13 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.security.Principal
 
-
-@ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "spectrum not found")
-class SpectrumNotFoundException : RuntimeException()
-
 @RestController
 @PreAuthorize("permitAll")
 @RequestMapping("/spectra")
 class SpectraController {
+    @Autowired
+    internal lateinit var userDetailsService: SecUserDetailsService
+
     @Autowired
     private lateinit var repository: SpectrumRepository
 
@@ -33,11 +33,12 @@ class SpectraController {
                     repository.findById(id)
             return if (user != null) { // Are we logged in?
                 val authUser =
-                        userRepository.findByLogin(user.name)
-                spect.filter {
-                    (it.owner == authUser?.id) or  // It is owned by this user
-                            it.public or // or public
-                            ((authUser?.roles?.count { role -> role.name == "ROLE_ADMIN" }) ?: 0 > 0)
+                        userDetailsService.loadUserByUsername(user.name)
+
+                spect.filter {spectrum ->
+                    (spectrum.owner == authUser.username) or  // It is owned by this user
+                            spectrum.public or // or public
+                            (authUser.authorities.any { it.authority == "ROLE_ADMIN" }) // or user is an admin
                 }.get()
             } else { // If we are not logged in, any public spectrum can be displayed
                 spect.filter {

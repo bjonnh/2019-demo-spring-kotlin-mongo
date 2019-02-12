@@ -6,5 +6,5 @@ class User(@Id val id: String,
            var login: String,
            var firstName: String?,
            var lastName: String?,
-           var password: String?,  // For demo only of course
+           var password: String?,
            var roles: Collection<Role> = listOf())

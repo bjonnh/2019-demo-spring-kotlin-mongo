@@ -20,10 +20,10 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.util.StringUtils
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
-import RoleRepository
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 
-
+/*
+ * The basic class for REST authentication
+ */
 @Component
 class RestAuthenticationEntryPoint : AuthenticationEntryPoint {
 
@@ -37,6 +37,10 @@ class RestAuthenticationEntryPoint : AuthenticationEntryPoint {
     }
 
 }
+
+/*
+ * This is the component that keep the auth request cached
+ */
 
 @Component
 class MySavedRequestAwareAuthenticationSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
@@ -70,6 +74,11 @@ class MySavedRequestAwareAuthenticationSuccessHandler : SimpleUrlAuthenticationS
     }
 }
 
+/*
+ * This is configuration for the security aspect. This is where we can limit access globally to some endpoints
+ * But access can also be more fine-grained at the level of the controllers, see controller/SpectraController.kt
+ */
+
 @Configuration
 @EnableWebSecurity
 class SecurityConfig : WebSecurityConfigurerAdapter() {
@@ -93,6 +102,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     fun configAuthBuilder(builder: AuthenticationManagerBuilder) {
         builder.userDetailsService<SecUserDetailsService>(userDetailsService)
+
     }
 
     @Throws(Exception::class)
